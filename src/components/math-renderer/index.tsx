@@ -9,7 +9,6 @@ interface MathRendererProps {
 }
 
 const MathRenderer = ({ latex, displayMode = true }: MathRendererProps) => {
-	console.log('🚀 ~ MathRenderer ~ latex:', latex)
 	const containerRef = useRef<HTMLDivElement>(null);
 
 	useEffect(() => {

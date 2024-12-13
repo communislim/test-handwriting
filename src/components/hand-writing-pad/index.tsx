@@ -1,7 +1,9 @@
 'use client';
 import React, { useEffect, useRef, useState } from 'react'
 import * as iink from 'iink-ts'
-import { type TBehaviorOptions } from 'iink-ts'
+
+// Editor 타입을 직접 import 하지 않고 any로 처리
+type EditorType = any;
 
 const HandWritingPad = ({ onConvert }: { onConvert: (latex: string) => void }) => {
 	const isEnableAutoConvert = useRef(false)
@@ -16,8 +18,7 @@ const HandWritingPad = ({ onConvert }: { onConvert: (latex: string) => void }) =
 		const clearElement = document.getElementById('clear')!;
 
 		async function loadEditor () {
-			console.log('test')
-			const options: TBehaviorOptions = {
+			const options = {
 				configuration: {
 					server: {
 						protocol: 'WEBSOCKET',
@@ -40,6 +41,10 @@ const HandWritingPad = ({ onConvert }: { onConvert: (latex: string) => void }) =
 						alwaysConnected: true,
 						math: {
 							mimeTypes: ['application/x-latex'],
+							text: {},
+							diagram: {},
+							export: {},
+							'raw-content': {},
 							margin: {
 								bottom: 10,
 								left: 15,
@@ -64,9 +69,10 @@ const HandWritingPad = ({ onConvert }: { onConvert: (latex: string) => void }) =
 						},
 					},
 				},
-			}
+			} as const
 
-			const editor = new iink.Editor(editorElement, options)
+			// Editor 생성 시 타입 관련 코드 수정
+			const editor: EditorType = new (iink as any).Editor(editorElement, options)
 			await editor.initialize()
 
 			editor.events.addEventListener('exported', (event: any) => {

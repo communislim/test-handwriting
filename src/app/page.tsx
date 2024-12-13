@@ -6,7 +6,6 @@ import MathRenderer from '@/components/math-renderer';
 export default function Home () {
   const [latex, setLatex] = useState('')
   const handleConvert = (latex: string) => {
-    console.log('🚀 ~ latex:', latex)
     setLatex(latex)
   }
 
