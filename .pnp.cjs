@@ -32,6 +32,7 @@ const RAW_RUNTIME_STATE =
           ["autoprefixer", "virtual:51d6e837f48169f3b389ea3a6c56066839bce112e078caada9145fc357a180d3d76dc86ead33d616d1ddc73db54591d464054501bc3c94da46459c042cc28386#npm:10.4.20"],\
           ["eslint", "npm:8.57.1"],\
           ["eslint-config-next", "virtual:51d6e837f48169f3b389ea3a6c56066839bce112e078caada9145fc357a180d3d76dc86ead33d616d1ddc73db54591d464054501bc3c94da46459c042cc28386#npm:14.1.0"],\
+          ["iink-ts", "npm:2.0.1"],\
           ["next", "virtual:51d6e837f48169f3b389ea3a6c56066839bce112e078caada9145fc357a180d3d76dc86ead33d616d1ddc73db54591d464054501bc3c94da46459c042cc28386#npm:14.1.0"],\
           ["postcss", "npm:8.4.49"],\
           ["react", "npm:18.3.1"],\
@@ -2458,6 +2459,16 @@ const RAW_RUNTIME_STATE =
         "linkType": "HARD"\
       }]\
     ]],\
+    ["iink-ts", [\
+      ["npm:2.0.1", {\
+        "packageLocation": "../../.yarn/berry/cache/iink-ts-npm-2.0.1-0becb5ed57-10c0.zip/node_modules/iink-ts/",\
+        "packageDependencies": [\
+          ["iink-ts", "npm:2.0.1"],\
+          ["json-css", "npm:1.5.6"]\
+        ],\
+        "linkType": "HARD"\
+      }]\
+    ]],\
     ["import-fresh", [\
       ["npm:3.3.0", {\
         "packageLocation": "../../.yarn/berry/cache/import-fresh-npm-3.3.0-3e34265ca9-10c0.zip/node_modules/import-fresh/",\
@@ -2914,6 +2925,15 @@ const RAW_RUNTIME_STATE =
         "packageLocation": "../../.yarn/berry/cache/json-buffer-npm-3.0.1-f8f6d20603-10c0.zip/node_modules/json-buffer/",\
         "packageDependencies": [\
           ["json-buffer", "npm:3.0.1"]\
+        ],\
+        "linkType": "HARD"\
+      }]\
+    ]],\
+    ["json-css", [\
+      ["npm:1.5.6", {\
+        "packageLocation": "../../.yarn/berry/cache/json-css-npm-1.5.6-334f1ced66-10c0.zip/node_modules/json-css/",\
+        "packageDependencies": [\
+          ["json-css", "npm:1.5.6"]\
         ],\
         "linkType": "HARD"\
       }]\
@@ -4565,6 +4585,7 @@ const RAW_RUNTIME_STATE =
           ["autoprefixer", "virtual:51d6e837f48169f3b389ea3a6c56066839bce112e078caada9145fc357a180d3d76dc86ead33d616d1ddc73db54591d464054501bc3c94da46459c042cc28386#npm:10.4.20"],\
           ["eslint", "npm:8.57.1"],\
           ["eslint-config-next", "virtual:51d6e837f48169f3b389ea3a6c56066839bce112e078caada9145fc357a180d3d76dc86ead33d616d1ddc73db54591d464054501bc3c94da46459c042cc28386#npm:14.1.0"],\
+          ["iink-ts", "npm:2.0.1"],\
           ["next", "virtual:51d6e837f48169f3b389ea3a6c56066839bce112e078caada9145fc357a180d3d76dc86ead33d616d1ddc73db54591d464054501bc3c94da46459c042cc28386#npm:14.1.0"],\
           ["postcss", "npm:8.4.49"],\
           ["react", "npm:18.3.1"],\
