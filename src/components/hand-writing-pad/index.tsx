@@ -1,11 +1,11 @@
 'use client';
-import React, { memo, useEffect, useRef, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import * as iink from 'iink-ts'
 
 // Editor 타입을 직접 import 하지 않고 any로 처리
 type EditorType = any;
 
-const HandWritingPad = memo(({ onConvert }: { onConvert: (latex: string) => void }) => {
+const HandWritingPad = ({ onConvert }: { onConvert: (latex: string) => void }) => {
 	const isEnableAutoConvert = useRef(false)
 	const [disabledUndo, setDisabledUndo] = useState(true)
 	const [disabledRedo, setDisabledRedo] = useState(true)
@@ -172,8 +172,6 @@ const HandWritingPad = memo(({ onConvert }: { onConvert: (latex: string) => void
 			</div>
 		</div >
 	);
-});
-
-HandWritingPad.displayName = 'HandWritingPad'
+};
 
 export default HandWritingPad;
