@@ -128,11 +128,15 @@ const HandWritingPad = ({ onConvert }: { onConvert: (latex: string) => void }) =
 	}, []);
 
 	return (
-		<div id="hand-writing-pad" className="flex justify-center absolute bottom-0">
-			<div id="editor" touch-action="none" className="bg-slate-100 rounded-2xl
+		<div id="hand-writing-pad" className="w-full h-full max-h-[280px] max-w-[800px] flex justify-center absolute bottom-0">
+			<div id="editor" touch-action="none"
+				className="
+				w-full h-full
+				min-h-[280px] max-w-[800px]
+				bg-slate-100 rounded-2xl
 				[background-image:radial-gradient(rgba(175,189,196,0.47)_2px,transparent_2px)] 
 				[background-size:17px_17px]"
-				style={{ width: '800px', height: '280px' }}>
+			>
 			</div>
 			<div id="hand-writing-pad-controls" className="flex flex-row justify-end gap-2 z-10 absolute right-3 top-3">
 				<button
