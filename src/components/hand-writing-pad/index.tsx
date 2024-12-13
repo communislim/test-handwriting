@@ -12,9 +12,6 @@ const HandWritingPad = ({ onConvert }: { onConvert: (latex: string) => void }) =
 	const [disabledClear, setDisabledClear] = useState(true)
 
 	useEffect(() => {
-		console.log('APPLICATION_KEY', process.env.NEXT_PUBLIC_APPLICATION_KEY)
-		console.log('HMAC_KEY', process.env.NEXT_PUBLIC_HMAC_KEY)
-
 		const editorElement = document.getElementById('editor')!;
 		const undoElement = document.getElementById('undo')!;
 		const redoElement = document.getElementById('redo')!;
