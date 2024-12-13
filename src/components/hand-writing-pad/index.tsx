@@ -91,22 +91,17 @@ const HandWritingPad = ({ onConvert }: { onConvert: (latex: string) => void }) =
 				setDisabledUndo(true)
 				setDisabledRedo(true)
 				setDisabledClear(true)
-				onConvert('')
 			})
 			undoElement.addEventListener('click', () => {
 				const context = editor.context
 				if (context.canUndo) {
 					editor.undo()
-				} else {
-					onConvert('')
 				}
 			})
 			redoElement.addEventListener('click', () => {
 				const context = editor.context
 				if (context.canRedo) {
 					editor.redo()
-				} else {
-					onConvert('')
 				}
 			})
 			editorElement.addEventListener('changed', (event: any) => {
@@ -115,6 +110,7 @@ const HandWritingPad = ({ onConvert }: { onConvert: (latex: string) => void }) =
 						setDisabledUndo(true)
 						setDisabledRedo(true)
 						setDisabledClear(true)
+						onConvert('')
 					} else {
 						setDisabledUndo(!event.detail.canUndo)
 						setDisabledRedo(!event.detail.canRedo)

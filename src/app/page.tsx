@@ -9,10 +9,6 @@ export default function Home () {
     setLatex(latex)
   }, []);
 
-  useEffect(() => {
-    console.log('컴포넌트가 리렌더링된 시점:', new Date().getTime());
-  }, [latex]);
-
   return (
     <div className="flex min-h-screen flex-col items-center justify-between">
       <MathRenderer latex={latex} displayMode={true} />
