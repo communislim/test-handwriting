@@ -1,5 +1,5 @@
 'use client';
-import { useState, useCallback, useEffect } from 'react';
+import { useState, useCallback } from 'react';
 import HandWritingPad from '../components/hand-writing-pad';
 import MathRenderer from '@/components/math-renderer';
 
