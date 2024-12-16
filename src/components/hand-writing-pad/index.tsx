@@ -27,45 +27,12 @@ const HandWritingPad = ({ onConvert }: { onConvert: (latex: string) => void }) =
 						applicationKey: process.env.NEXT_PUBLIC_APPLICATION_KEY!,
 						hmacKey: process.env.NEXT_PUBLIC_HMAC_KEY!,
 						version: '2.0.1',
-						websocket: {
-							pingEnabled: true,
-							autoReconnect: true,
-							pingDelay: 1000,
-							maxPingLostCount: 3,
-							maxRetryCount: 3,
-							fileChunkSize: 1024 * 1024,
-						},
 					},
 					recognition: {
 						type: 'MATH',
 						alwaysConnected: true,
 						math: {
 							mimeTypes: ['application/x-latex'],
-							text: {},
-							diagram: {},
-							export: {},
-							'raw-content': {},
-							margin: {
-								bottom: 10,
-								left: 15,
-								right: 15,
-								top: 10,
-							},
-						},
-						gesture: {
-							enable: true,
-							ignoreGestureStrokes: false,
-						},
-						convert: {
-							force: {
-								"on-stylesheet-change": true,
-							},
-						},
-						renderer: {
-							debug: {
-								"draw-text-boxes": true,
-								"draw-image-boxes": true,
-							},
 						},
 					},
 				},
