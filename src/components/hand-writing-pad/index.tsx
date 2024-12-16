@@ -38,7 +38,6 @@ const HandWritingPad = ({ onConvert }: { onConvert: (latex: string) => void }) =
 				},
 			} as const
 
-			// Editor 생성 시 타입 관련 코드 수정
 			const editor: EditorType = new (iink as any).Editor(editorElement, options)
 			await editor.initialize()
 
@@ -72,18 +71,16 @@ const HandWritingPad = ({ onConvert }: { onConvert: (latex: string) => void }) =
 				}
 			})
 			editorElement.addEventListener('changed', (event: any) => {
-				requestAnimationFrame(() => {
-					if (event.detail.empty) {
-						setDisabledUndo(true)
-						setDisabledRedo(true)
-						setDisabledClear(true)
-						onConvert('')
-					} else {
-						setDisabledUndo(!event.detail.canUndo)
-						setDisabledRedo(!event.detail.canRedo)
-						setDisabledClear(!event.detail.canUndo)
-					}
-				})
+				if (event.detail.empty) {
+					setDisabledUndo(true)
+					setDisabledRedo(true)
+					setDisabledClear(true)
+					onConvert('')
+				} else {
+					setDisabledUndo(!event.detail.canUndo)
+					setDisabledRedo(!event.detail.canRedo)
+					setDisabledClear(!event.detail.canUndo)
+				}
 			})
 		}
 
