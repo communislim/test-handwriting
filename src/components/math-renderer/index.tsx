@@ -35,7 +35,7 @@ const MathRenderer = ({ latex, displayMode = true }: MathRendererProps) => {
 		<div
 			ref={containerRef}
 			className="w-full h-full bg-slate-100 text-center p-10
-			text-4xl
+			text-4xl text-black dark:text-black
 			min-h-[204px] max-w-[800px]"
 		/>
 	);
