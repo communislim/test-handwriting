@@ -36,7 +36,7 @@ const HandWritingPad = ({ onConvert }: { onConvert: (latex: string) => void }) =
 						alwaysConnected: true,
 						math: {
 							mimeTypes: ['application/x-latex'],
-							'session-time': 200,
+							'session-time': 100,
 						},
 					},
 				},
