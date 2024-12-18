@@ -33,6 +33,7 @@ const HandWritingPad = ({ onConvert }: { onConvert: (latex: string) => void }) =
 						alwaysConnected: true,
 						math: {
 							mimeTypes: ['application/x-latex'],
+							'session-time': 200,
 						},
 					},
 				},
@@ -45,6 +46,7 @@ const HandWritingPad = ({ onConvert }: { onConvert: (latex: string) => void }) =
 				const exports = event.detail
 				if (exports?.['application/x-latex']) {
 					const latex = exports['application/x-latex']
+					console.log('🔥 Convert: ', Date.now())
 					onConvert(latex)
 
 					if (isEnableAutoConvert.current) {

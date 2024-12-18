@@ -25,6 +25,10 @@ const MathRenderer = ({ latex, displayMode = true }: MathRendererProps) => {
 					trust: true,
 					strict: false
 				});
+
+				requestAnimationFrame(() => {
+					console.log('🔥Render: ', Date.now())
+				});
 			} catch (error) {
 				console.error('LaTeX 렌더링 오류:', error);
 			}
