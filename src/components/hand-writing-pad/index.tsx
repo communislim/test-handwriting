@@ -27,6 +27,9 @@ const HandWritingPad = ({ onConvert }: { onConvert: (latex: string) => void }) =
 						applicationKey: process.env.NEXT_PUBLIC_APPLICATION_KEY!,
 						hmacKey: process.env.NEXT_PUBLIC_HMAC_KEY!,
 						version: '2.0.1',
+						websocket: {
+							autoReconnect: true,
+						},
 					},
 					recognition: {
 						type: 'MATH',
