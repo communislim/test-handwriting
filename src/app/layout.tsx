@@ -9,7 +9,7 @@ export const metadata: Metadata = {
   description: "test-handwriting",
 };
 
-export default function RootLayout ({
+export default function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;

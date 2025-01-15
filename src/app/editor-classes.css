@@ -1,0 +1,3 @@
+.ms-editor.message-modal.error-msg::before {
+  content: "";
+}

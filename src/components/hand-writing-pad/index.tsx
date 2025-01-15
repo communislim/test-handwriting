@@ -1,6 +1,8 @@
 'use client';
 import React, { useEffect, useRef, useState } from 'react'
 import * as iink from 'iink-ts'
+import '../../app/editor-classes.css'
+import { InternalEventType, TOIMessageEventError } from 'iink-ts';
 
 // Editor 타입을 직접 import 하지 않고 any로 처리
 type EditorType = any;
@@ -10,18 +12,21 @@ const HandWritingPad = ({ onConvert }: { onConvert: (latex: string) => void }) =
 	const [disabledUndo, setDisabledUndo] = useState(true)
 	const [disabledRedo, setDisabledRedo] = useState(true)
 	const [disabledClear, setDisabledClear] = useState(true)
+	const [wsData, setWsData] = useState<any>(null)
 
 	useEffect(() => {
 		const editorElement = document.getElementById('editor')!;
 		const undoElement = document.getElementById('undo')!;
 		const redoElement = document.getElementById('redo')!;
 		const clearElement = document.getElementById('clear')!;
+		const messageModal = document.createElement("div")
+		messageModal.classList.add("message-modal")
 
-		async function loadEditor () {
-			const options = {
+		async function loadEditor() {
+			const editor = new iink.Editor(editorElement, {
 				configuration: {
 					server: {
-						protocol: 'WEBSOCKET',
+						protocol: 'WEBSOCKET' as const,
 						scheme: 'https',
 						host: 'cloud.myscript.com',
 						applicationKey: process.env.NEXT_PUBLIC_APPLICATION_KEY!,
@@ -29,6 +34,8 @@ const HandWritingPad = ({ onConvert }: { onConvert: (latex: string) => void }) =
 						version: '2.0.1',
 						websocket: {
 							autoReconnect: true,
+							pingEnabled: true,
+							pingDelay: 30000,
 						},
 					},
 					recognition: {
@@ -40,10 +47,18 @@ const HandWritingPad = ({ onConvert }: { onConvert: (latex: string) => void }) =
 						},
 					},
 				},
-			} as const
-
-			const editor: EditorType = new (iink as any).Editor(editorElement, options)
+			})
 			await editor.initialize()
+
+			editor.internalEvents.addEventListener(InternalEventType.ERROR, (event: any) => {
+				if (event.detail.message.includes('Session closed')) {
+					editor.waitForIdle()
+				}
+			})
+
+			editor.events.addEventListener('loaded', (event: any) => {
+				console.log('loaded')
+			})
 
 			editor.events.addEventListener('exported', (event: any) => {
 				const exports = event.detail
@@ -56,6 +71,7 @@ const HandWritingPad = ({ onConvert }: { onConvert: (latex: string) => void }) =
 					}
 				}
 			})
+
 			clearElement.addEventListener('click', async () => {
 				editor.clear()
 				setDisabledUndo(true)
@@ -89,7 +105,7 @@ const HandWritingPad = ({ onConvert }: { onConvert: (latex: string) => void }) =
 		}
 
 		loadEditor().catch((error) => console.error(error))
-	}, []);
+	}, [onConvert]);
 
 	return (
 		<div id="hand-writing-pad" className="w-full h-full max-h-[280px] max-w-[800px] flex justify-center absolute bottom-0">
