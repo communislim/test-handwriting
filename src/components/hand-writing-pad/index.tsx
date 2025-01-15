@@ -4,9 +4,6 @@ import * as iink from 'iink-ts'
 import '../../app/editor-classes.css'
 import { InternalEventType, TOIMessageEventError } from 'iink-ts';
 
-// Editor 타입을 직접 import 하지 않고 any로 처리
-type EditorType = any;
-
 const HandWritingPad = ({ onConvert }: { onConvert: (latex: string) => void }) => {
 	const isEnableAutoConvert = useRef(false)
 	const [disabledUndo, setDisabledUndo] = useState(true)
@@ -52,7 +49,7 @@ const HandWritingPad = ({ onConvert }: { onConvert: (latex: string) => void }) =
 
 			editor.internalEvents.addEventListener(InternalEventType.ERROR, (event: any) => {
 				if (event.detail.message.includes('Session closed')) {
-					editor.waitForIdle()
+					editor.clear()
 				}
 			})
 
