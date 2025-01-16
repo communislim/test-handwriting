@@ -32,7 +32,8 @@ const HandWritingPad = ({ onConvert }: { onConvert: (latex: string) => void }) =
 						websocket: {
 							autoReconnect: true,
 							pingEnabled: true,
-							pingDelay: 30000,
+							pingDelay: 10000,
+							maxRetryCount: 10,
 						},
 					},
 					recognition: {
@@ -47,9 +48,20 @@ const HandWritingPad = ({ onConvert }: { onConvert: (latex: string) => void }) =
 			})
 			await editor.initialize()
 
-			editor.internalEvents.addEventListener(InternalEventType.ERROR, (event: any) => {
-				if (event.detail.message.includes('Session closed')) {
-					editor.clear()
+			editor.internalEvents.addEventListener(InternalEventType.ERROR, async (event: any) => {
+				const error = event.detail
+				console.log('Editor error:', error)
+
+				if (error.message.includes('Session closed')) {
+					try {						
+						await editor.clear()
+						
+						await editor.waitForIdle()
+						await editor.initialize()
+
+					} catch (reconnectError) {
+						console.error('Failed to reconnect:', reconnectError)
+					}
 				}
 			})
 
