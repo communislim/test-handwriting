@@ -54,21 +54,21 @@ const HandWritingPad = ({ onConvert }: { onConvert: (latex: string) => void }) =
 			},
 		})
 		await editor.initialize()
-		let exportedTimer: number
+		// let exportedTimer: number
 
-		const keepAliveEditor = async () => {
-			clearTimeout(exportedTimer)
-			if (!editor) return
+		// const keepAliveEditor = async () => {
+		// 	clearTimeout(exportedTimer)
+		// 	if (!editor) return
 
-			console.log('keepAliveEditor')
-			try {
-				await editor.clear()
+		// 	console.log('keepAliveEditor')
+		// 	try {
+		// 		await editor.clear()
 
-				await loadEditor()
-			} catch (error) {
-				console.error('Keep alive failed:', error)
-			}
-		}
+		// 		await loadEditor()
+		// 	} catch (error) {
+		// 		console.error('Keep alive failed:', error)
+		// 	}
+		// }
 
 		editor.internalEvents.addEventListener(InternalEventType.ERROR, async (event: any) => {
 			const error = event.detail
