@@ -9,14 +9,25 @@ const HandWritingPad = ({ onConvert }: { onConvert: (latex: string) => void }) =
 	const [disabledUndo, setDisabledUndo] = useState(true)
 	const [disabledRedo, setDisabledRedo] = useState(true)
 	const [disabledClear, setDisabledClear] = useState(true)
+	const editorElement = useRef<HTMLElement | null>(null)
+	const undoElement = useRef<HTMLElement | null>(null)
+	const redoElement = useRef<HTMLElement | null>(null)
+	const clearElement = useRef<HTMLElement | null>(null)
 
 	async function loadEditor() {
-		const editorElement = document.getElementById('editor')!;
-		const undoElement = document.getElementById('undo')!;
-		const redoElement = document.getElementById('redo')!;
-		const clearElement = document.getElementById('clear')!;
+		if (editorElement.current) {
+			editorElement.current = null
+			undoElement.current = null
+			redoElement.current = null
+			clearElement.current = null
+		}
 
-		const editor = new iink.Editor(editorElement, {
+		editorElement.current = document.getElementById('editor')
+		undoElement.current = document.getElementById('undo')
+		redoElement.current = document.getElementById('redo')
+		clearElement.current = document.getElementById('clear')
+
+		const editor = new iink.Editor(editorElement.current!, {
 			configuration: {
 				server: {
 					protocol: 'WEBSOCKET' as const,
@@ -66,6 +77,8 @@ const HandWritingPad = ({ onConvert }: { onConvert: (latex: string) => void }) =
 			if (error.message.includes('Session closed')) {
 				try {
 					console.log('Reconnecting...')
+					await editor.clear()
+					await loadEditor()
 				} catch (reconnectError) {
 					console.error('Failed to reconnect:', reconnectError)
 				}
@@ -83,10 +96,10 @@ const HandWritingPad = ({ onConvert }: { onConvert: (latex: string) => void }) =
 				console.log('exported: ', latex)
 				onConvert(latex)
 
-				if (exportedTimer) {
-					clearTimeout(exportedTimer)
-				}
-				exportedTimer = window.setTimeout(keepAliveEditor, 10000)
+				// if (exportedTimer) {
+				// 	clearTimeout(exportedTimer)
+				// }
+				// exportedTimer = window.setTimeout(keepAliveEditor, 5000)
 
 				if (isEnableAutoConvert.current) {
 					editor.convert()
@@ -94,25 +107,25 @@ const HandWritingPad = ({ onConvert }: { onConvert: (latex: string) => void }) =
 			}
 		})
 
-		clearElement.addEventListener('click', async () => {
+		clearElement.current?.addEventListener('click', async () => {
 			editor.clear()
 			setDisabledUndo(true)
 			setDisabledRedo(true)
 			setDisabledClear(true)
 		})
-		undoElement.addEventListener('click', () => {
+		undoElement.current?.addEventListener('click', () => {
 			const context = editor.context
 			if (context.canUndo) {
 				editor.undo()
 			}
 		})
-		redoElement.addEventListener('click', () => {
+		redoElement.current?.addEventListener('click', () => {
 			const context = editor.context
 			if (context.canRedo) {
 				editor.redo()
 			}
 		})
-		editorElement.addEventListener('changed', (event: any) => {
+		editorElement.current?.addEventListener('changed', (event: any) => {
 			if (event.detail.empty) {
 				setDisabledUndo(true)
 				setDisabledRedo(true)
