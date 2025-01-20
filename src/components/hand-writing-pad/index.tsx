@@ -9,112 +9,106 @@ const HandWritingPad = ({ onConvert }: { onConvert: (latex: string) => void }) =
 	const [disabledUndo, setDisabledUndo] = useState(true)
 	const [disabledRedo, setDisabledRedo] = useState(true)
 	const [disabledClear, setDisabledClear] = useState(true)
-	const [wsData, setWsData] = useState<any>(null)
 
-	useEffect(() => {
+	async function loadEditor() {
 		const editorElement = document.getElementById('editor')!;
 		const undoElement = document.getElementById('undo')!;
 		const redoElement = document.getElementById('redo')!;
 		const clearElement = document.getElementById('clear')!;
-		const messageModal = document.createElement("div")
-		messageModal.classList.add("message-modal")
 
-		async function loadEditor() {
-			const editor = new iink.Editor(editorElement, {
-				configuration: {
-					server: {
-						protocol: 'WEBSOCKET' as const,
-						scheme: 'https',
-						host: 'cloud.myscript.com',
-						applicationKey: process.env.NEXT_PUBLIC_APPLICATION_KEY!,
-						hmacKey: process.env.NEXT_PUBLIC_HMAC_KEY!,
-						version: '2.0.1',
-						websocket: {
-							autoReconnect: true,
-							pingEnabled: true,
-							pingDelay: 10000,
-							maxRetryCount: 10,
-						},
-					},
-					recognition: {
-						type: 'MATH',
-						alwaysConnected: true,
-						math: {
-							mimeTypes: ['application/x-latex'],
-							'session-time': 100,
-						},
+		const editor = new iink.Editor(editorElement, {
+			configuration: {
+				server: {
+					protocol: 'WEBSOCKET' as const,
+					scheme: 'https',
+					host: 'cloud.myscript.com',
+					applicationKey: process.env.NEXT_PUBLIC_APPLICATION_KEY!,
+					hmacKey: process.env.NEXT_PUBLIC_HMAC_KEY!,
+					version: '2.0.1',
+					websocket: {
+						autoReconnect: true,
+						pingEnabled: true,
+						pingDelay: 10000,
+						maxRetryCount: 10,
 					},
 				},
-			})
-			await editor.initialize()
+				recognition: {
+					type: 'MATH',
+					alwaysConnected: true,
+					math: {
+						mimeTypes: ['application/x-latex'],
+						'session-time': 100,
+					},
+				},
+			},
+		})
+		await editor.initialize()
 
-			editor.internalEvents.addEventListener(InternalEventType.ERROR, async (event: any) => {
-				const error = event.detail
-				console.log('Editor error:', error)
+		editor.internalEvents.addEventListener(InternalEventType.ERROR, async (event: any) => {
+			const error = event.detail
+			console.log('Editor error:', error)
 
-				if (error.message.includes('Session closed')) {
-					try {						
-						await editor.clear()
-						
-						await editor.waitForIdle()
-						await editor.initialize()
+			if (error.message.includes('Session closed')) {
+				try {
+					await loadEditor()
 
-					} catch (reconnectError) {
-						console.error('Failed to reconnect:', reconnectError)
-					}
+				} catch (reconnectError) {
+					console.error('Failed to reconnect:', reconnectError)
 				}
-			})
+			}
+		})
 
-			editor.events.addEventListener('loaded', (event: any) => {
-				console.log('loaded')
-			})
+		editor.events.addEventListener('loaded', (event: any) => {
+			console.log('loaded')
+		})
 
-			editor.events.addEventListener('exported', (event: any) => {
-				const exports = event.detail
-				if (exports?.['application/x-latex']) {
-					const latex = exports['application/x-latex']
-					onConvert(latex)
+		editor.events.addEventListener('exported', (event: any) => {
+			const exports = event.detail
+			if (exports?.['application/x-latex']) {
+				const latex = exports['application/x-latex']
+				onConvert(latex)
 
-					if (isEnableAutoConvert.current) {
-						editor.convert()
-					}
+				if (isEnableAutoConvert.current) {
+					editor.convert()
 				}
-			})
+			}
+		})
 
-			clearElement.addEventListener('click', async () => {
-				editor.clear()
+		clearElement.addEventListener('click', async () => {
+			editor.clear()
+			setDisabledUndo(true)
+			setDisabledRedo(true)
+			setDisabledClear(true)
+		})
+		undoElement.addEventListener('click', () => {
+			const context = editor.context
+			if (context.canUndo) {
+				editor.undo()
+			}
+		})
+		redoElement.addEventListener('click', () => {
+			const context = editor.context
+			if (context.canRedo) {
+				editor.redo()
+			}
+		})
+		editorElement.addEventListener('changed', (event: any) => {
+			if (event.detail.empty) {
 				setDisabledUndo(true)
 				setDisabledRedo(true)
 				setDisabledClear(true)
-			})
-			undoElement.addEventListener('click', () => {
-				const context = editor.context
-				if (context.canUndo) {
-					editor.undo()
-				}
-			})
-			redoElement.addEventListener('click', () => {
-				const context = editor.context
-				if (context.canRedo) {
-					editor.redo()
-				}
-			})
-			editorElement.addEventListener('changed', (event: any) => {
-				if (event.detail.empty) {
-					setDisabledUndo(true)
-					setDisabledRedo(true)
-					setDisabledClear(true)
-					onConvert('')
-				} else {
-					setDisabledUndo(!event.detail.canUndo)
-					setDisabledRedo(!event.detail.canRedo)
-					setDisabledClear(!event.detail.canUndo)
-				}
-			})
-		}
+				onConvert('')
+			} else {
+				setDisabledUndo(!event.detail.canUndo)
+				setDisabledRedo(!event.detail.canRedo)
+				setDisabledClear(!event.detail.canUndo)
+			}
+		})
+	}
 
+	useEffect(() => {
 		loadEditor().catch((error) => console.error(error))
-	}, [onConvert]);
+	}, []);
 
 	return (
 		<div id="hand-writing-pad" className="w-full h-full max-h-[280px] max-w-[800px] flex justify-center absolute bottom-0">
