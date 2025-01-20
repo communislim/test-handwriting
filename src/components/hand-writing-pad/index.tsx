@@ -50,6 +50,7 @@ const HandWritingPad = ({ onConvert }: { onConvert: (latex: string) => void }) =
 
 			if (error.message.includes('Session closed')) {
 				try {
+					console.log('Reconnecting...')
 					await loadEditor()
 
 				} catch (reconnectError) {
