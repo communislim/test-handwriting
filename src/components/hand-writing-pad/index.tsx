@@ -43,6 +43,21 @@ const HandWritingPad = ({ onConvert }: { onConvert: (latex: string) => void }) =
 			},
 		})
 		await editor.initialize()
+		let exportedTimer: number
+
+		const keepAliveEditor = async () => {
+			clearTimeout(exportedTimer)
+			if (!editor) return
+
+			console.log('keepAliveEditor')
+			try {
+				await editor.clear()
+
+				await loadEditor()
+			} catch (error) {
+				console.error('Keep alive failed:', error)
+			}
+		}
 
 		editor.internalEvents.addEventListener(InternalEventType.ERROR, async (event: any) => {
 			const error = event.detail
@@ -51,8 +66,6 @@ const HandWritingPad = ({ onConvert }: { onConvert: (latex: string) => void }) =
 			if (error.message.includes('Session closed')) {
 				try {
 					console.log('Reconnecting...')
-					await loadEditor()
-
 				} catch (reconnectError) {
 					console.error('Failed to reconnect:', reconnectError)
 				}
@@ -67,7 +80,13 @@ const HandWritingPad = ({ onConvert }: { onConvert: (latex: string) => void }) =
 			const exports = event.detail
 			if (exports?.['application/x-latex']) {
 				const latex = exports['application/x-latex']
+				console.log('exported: ', latex)
 				onConvert(latex)
+
+				if (exportedTimer) {
+					clearTimeout(exportedTimer)
+				}
+				exportedTimer = window.setTimeout(keepAliveEditor, 10000)
 
 				if (isEnableAutoConvert.current) {
 					editor.convert()
