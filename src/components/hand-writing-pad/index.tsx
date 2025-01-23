@@ -2,11 +2,10 @@
 import React, { useEffect, useRef, useState } from 'react'
 import * as iink from 'iink-ts'
 import '../../app/editor-classes.css'
-import { InternalEventType, TOIMessageEventError } from 'iink-ts';
+import { InternalEventType } from 'iink-ts';
 
 const HandWritingPad = ({ onConvert }: { onConvert: (latex: string) => void }) => {
 	const isEnableAutoConvert = useRef(false)
-	const isInitialized = useRef(false)
 	const [disabledUndo, setDisabledUndo] = useState(true)
 	const [disabledRedo, setDisabledRedo] = useState(true)
 	const [disabledClear, setDisabledClear] = useState(true)
@@ -17,11 +16,6 @@ const HandWritingPad = ({ onConvert }: { onConvert: (latex: string) => void }) =
 	const editorRef = useRef<iink.Editor | null>(null);
 
 	async function loadEditor() {
-		if (isInitialized.current) {
-			console.log('Editor already initialized, skipping...');
-			return;
-		}
-
 		if (editorRef.current) {
 			editorRef.current = null;
 		}
@@ -62,24 +56,7 @@ const HandWritingPad = ({ onConvert }: { onConvert: (latex: string) => void }) =
 				},
 			},
 		})
-		editorRef.current = editor;
 		await editor.initialize()
-		isInitialized.current = true;
-		let exportedTimer: number
-
-		const keepAliveEditor = async () => {
-			clearTimeout(exportedTimer)
-			if (!editor) return
-
-			console.log('keepAliveEditor')
-			try {
-				await editor.clear()
-
-				await loadEditor()
-			} catch (error) {
-				console.error('Keep alive failed:', error)
-			}
-		}
 
 		const handleLoaded = (event: any) => {
 			console.log('loaded')
@@ -91,11 +68,6 @@ const HandWritingPad = ({ onConvert }: { onConvert: (latex: string) => void }) =
 				const latex = exports['application/x-latex']
 				console.log('exported: ', latex)
 				onConvert(latex)
-
-				if (exportedTimer) {
-					clearTimeout(exportedTimer)
-				}
-				exportedTimer = window.setTimeout(keepAliveEditor, 60000)
 
 				if (isEnableAutoConvert.current) {
 					editor.convert()
@@ -110,12 +82,16 @@ const HandWritingPad = ({ onConvert }: { onConvert: (latex: string) => void }) =
 			if (error.message.includes('Session closed')) {
 				try {
 					console.log('Reconnecting...')
-					keepAliveEditor()
 				} catch (reconnectError) {
 					console.error('Failed to reconnect:', reconnectError)
 				}
 			}
 		}
+
+		const interval = setInterval(() => {
+			console.log('interval importPointEvents');
+			editor.importPointEvents([]);
+		}, 10 * 1000);
 
 		editor.events.addEventListener('loaded', handleLoaded)
 		editor.events.addEventListener('exported', handleExported)
@@ -152,35 +128,20 @@ const HandWritingPad = ({ onConvert }: { onConvert: (latex: string) => void }) =
 			}
 		})
 
-		return () => {
-			isInitialized.current = false;
+		window.addEventListener("beforeunload", () => {
+			clearInterval(interval);
 			editor.events.removeEventListener('loaded', handleLoaded)
 			editor.events.removeEventListener('exported', handleExported)
 			editor.internalEvents.removeEventListener(InternalEventType.ERROR, handleError)
-		}
+		});
 	}
 
 	useEffect(() => {
-		let cleanup: (() => void) | undefined;
-		
 		loadEditor()
-			.then((cleanupFn) => {
-				cleanup = cleanupFn;
-			})
+			.then()
 			.catch((error) => {
-				console.error(error);
-				isInitialized.current = false;
+				console.error(error)
 			});
-
-		return () => {
-			if (cleanup) {
-				cleanup();
-			}
-			if (editorRef.current) {
-				editorRef.current = null;
-			}
-			isInitialized.current = false;
-		}
 	}, []);
 
 	return (
